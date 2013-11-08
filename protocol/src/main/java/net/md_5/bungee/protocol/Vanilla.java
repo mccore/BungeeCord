@@ -88,7 +88,6 @@ public class Vanilla implements Protocol
         DefinedPacket packet = packet( id, protocol );
         if ( packet != null )
         {
-            packet.setProtocolHack( protocolHack );
             packet.read( buf );
             return packet;
         }

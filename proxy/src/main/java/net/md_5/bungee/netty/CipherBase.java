@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  * {@link #cipher(io.netty.buffer.ByteBuf, io.netty.buffer.ByteBuf)} method to
  * aid in the efficient passing of ByteBuffers through a cipher.
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public class CipherBase
 {
 
@@ -45,7 +45,7 @@ public class CipherBase
         return heapIn;
     }
 
-    protected ByteBuf cipher(ChannelHandlerContext ctx, ByteBuf in) throws ShortBufferException
+    public ByteBuf cipher(ChannelHandlerContext ctx, ByteBuf in) throws ShortBufferException
     {
         int readableBytes = in.readableBytes();
         byte[] heapIn = bufToByte( in );
@@ -56,7 +56,7 @@ public class CipherBase
         return heapOut;
     }
 
-    protected void cipher(ByteBuf in, ByteBuf out) throws ShortBufferException
+    public void cipher(ByteBuf in, ByteBuf out) throws ShortBufferException
     {
         int readableBytes = in.readableBytes();
         byte[] heapIn = bufToByte( in );

@@ -1,8 +1,10 @@
-package net.md_5.bungee.netty;
+package net.md_5.bungee.netty.encoders;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import net.md_5.bungee.netty.CipherBase;
+
 import javax.crypto.Cipher;
 
 public class CipherEncoder extends MessageToByteEncoder<ByteBuf>

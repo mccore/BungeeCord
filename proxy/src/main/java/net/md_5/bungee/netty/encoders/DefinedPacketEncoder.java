@@ -1,4 +1,4 @@
-package net.md_5.bungee.netty;
+package net.md_5.bungee.netty.encoders;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;

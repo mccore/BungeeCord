@@ -72,10 +72,10 @@ public class Vanilla implements Protocol
     }
 
     @Override
-    public DefinedPacket read(short packetId, ByteBuf buf)
+    public DefinedPacket read(short packetId, ByteBuf buf, boolean protocolHack)
     {
         int start = buf.readerIndex();
-        DefinedPacket packet = read( packetId, buf, this );
+        DefinedPacket packet = read( packetId, buf, this, protocolHack );
         if ( buf.readerIndex() == start )
         {
             throw new BadPacketException( "Unknown packet id " + packetId );
@@ -83,11 +83,12 @@ public class Vanilla implements Protocol
         return packet;
     }
 
-    public static DefinedPacket read(short id, ByteBuf buf, Protocol protocol)
+    public static DefinedPacket read(short id, ByteBuf buf, Protocol protocol, boolean protocolHack)
     {
         DefinedPacket packet = packet( id, protocol );
         if ( packet != null )
         {
+            packet.setProtocolHack( protocolHack );
             packet.read( buf );
             return packet;
         }

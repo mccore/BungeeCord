@@ -1,20 +1,11 @@
-package net.md_5.bungee.protocol.packet;
+package net.md_5.bungee.netty.packetrewriter;
 
 import io.netty.buffer.ByteBuf;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@RequiredArgsConstructor
-public abstract class DefinedPacket
-{
+public abstract class PacketRewriter {
+    public abstract void rewriteClientToServer(ByteBuf in, ByteBuf out);
+    public abstract void rewriteServerToClient(ByteBuf in, ByteBuf out);
 
-    private final int id;
-
-    public final int getId()
-    {
-        return id;
-    }
 
     public void writeString(String s, ByteBuf buf)
     {
@@ -100,18 +91,11 @@ public abstract class DefinedPacket
         }
     }
 
-    public abstract void read(ByteBuf buf);
-
-    public abstract void write(ByteBuf buf);
-
-    public abstract void handle(AbstractPacketHandler handler) throws Exception;
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract String toString();
+    public void unsupported(boolean clientside) throws UnsupportedOperationException {
+        if ( clientside ) {
+            throw new UnsupportedOperationException( "This packet is only client to server.");
+        } else {
+            throw new UnsupportedOperationException( "This packet is only server to client." );
+        }
+    }
 }

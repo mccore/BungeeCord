@@ -1,4 +1,4 @@
-package net.md_5.bungee.netty;
+package net.md_5.bungee.netty.decoders;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.skip.PacketReader;
@@ -36,7 +37,7 @@ public class PacketDecoder extends ReplayingDecoder<Void>
             // Store our start index
             int startIndex = in.readerIndex();
             // Run packet through framer
-            DefinedPacket packet = protocol.read( in.readUnsignedByte(), in );
+            DefinedPacket packet = protocol.read( in.readUnsignedByte(), in, false );
             // If we got this far, it means we have formed a packet, so lets grab the end index
             int endIndex = in.readerIndex();
             // Allocate a buffer big enough for all bytes we have read

@@ -1,51 +1,55 @@
-package net.md_5.bungee.protocol.packet;
+package net.md_5.bungee.netty;
 
 import io.netty.buffer.ByteBuf;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@RequiredArgsConstructor
-public abstract class DefinedPacket
-{
+import java.nio.charset.Charset;
 
-    private final int id;
-
-    public final int getId()
+public class Var {
+    public static void writeString(String s, ByteBuf buf, boolean varint)
     {
-        return id;
-    }
-
-    public void writeString(String s, ByteBuf buf)
-    {
-        // TODO: Check len - use Guava?
-        buf.writeShort( s.length() );
-        for ( char c : s.toCharArray() )
+        if ( varint )
         {
-            buf.writeChar( c );
+            byte[] content = s.getBytes( Charset.forName( "UTF-8" ) );
+            writeVarInt( content.length, buf );
+            buf.writeBytes( content );
+        }
+        else {
+            buf.writeShort( s.length() );
+            for ( char c : s.toCharArray() )
+            {
+                buf.writeChar( c );
+            }
         }
     }
 
-    public String readString(ByteBuf buf)
+    public static String readString(ByteBuf buf, boolean varint)
     {
-        // TODO: Check len - use Guava?
-        short len = buf.readShort();
-        char[] chars = new char[ len ];
-        for ( int i = 0; i < len; i++ )
+        if ( varint )
         {
-            chars[i] = buf.readChar();
+            int len = readVarInt( buf );
+            byte[] content = new byte[ len ];
+            buf.readBytes( content );
+            return new String( content, Charset.forName( "UTF-8" ) );
         }
-        return new String( chars );
+        else {
+            short len = buf.readShort();
+            char[] chars = new char[ len ];
+            for ( int i = 0; i < len; i++ )
+            {
+                chars[i] = buf.readChar();
+            }
+            return new String( chars );
+        }
     }
 
-    public void writeArray(byte[] b, ByteBuf buf)
+    public static void writeArray(byte[] b, ByteBuf buf)
     {
         // TODO: Check len - use Guava?
         buf.writeShort( b.length );
         buf.writeBytes( b );
     }
 
-    public byte[] readArray(ByteBuf buf)
+    public static byte[] readArray(ByteBuf buf)
     {
         // TODO: Check len - use Guava?
         short len = buf.readShort();
@@ -100,18 +104,4 @@ public abstract class DefinedPacket
         }
     }
 
-    public abstract void read(ByteBuf buf);
-
-    public abstract void write(ByteBuf buf);
-
-    public abstract void handle(AbstractPacketHandler handler) throws Exception;
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract String toString();
 }

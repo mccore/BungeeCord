@@ -10,11 +10,12 @@ public interface Protocol
 
     PacketReader getSkipper();
 
-    DefinedPacket read(short packetId, ByteBuf buf);
+    DefinedPacket read(short packetId, ByteBuf buf, boolean protocolHack);
 
     OpCode[][] getOpCodes();
 
     Class<? extends DefinedPacket>[] getClasses();
 
     Constructor<? extends DefinedPacket>[] getConstructors();
+
 }

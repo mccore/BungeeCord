@@ -4,9 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
@@ -20,10 +19,11 @@ import net.md_5.bungee.protocol.skip.PacketReader;
  * It is based on {@link ReplayingDecoder} so that packets will only be returned
  * when all needed data is present.
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PacketDecoder extends ReplayingDecoder<Void>
 {
 
+    @NonNull
     @Getter
     @Setter
     private Protocol protocol;
@@ -35,9 +35,11 @@ public class PacketDecoder extends ReplayingDecoder<Void>
         while ( true )
         {
             // Store our start index
-            int startIndex = in.readerIndex();
-            // Run packet through framer
-            DefinedPacket packet = protocol.read( in.readUnsignedByte(), in, false );
+            int  startIndex = in.readerIndex();
+            short packetId = in.readUnsignedByte();
+            System.out.println( "WOWE, i got such a " + packetId );
+            //  Run packet through framer
+            DefinedPacket packet = protocol.read( packetId, in );
             // If we got this far, it means we have formed a packet, so lets grab the end index
             int endIndex = in.readerIndex();
             // Allocate a buffer big enough for all bytes we have read

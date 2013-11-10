@@ -19,13 +19,13 @@ public class Forge extends Vanilla
     }
 
     @Override
-    public DefinedPacket read(short packetId, ByteBuf buf, boolean protocolHack)
+    public DefinedPacket read(short packetId, ByteBuf buf)
     {
         int start = buf.readerIndex();
-        DefinedPacket packet = read( packetId, buf, this, protocolHack );
+        DefinedPacket packet = read( packetId, buf, this );
         if ( buf.readerIndex() == start )
         {
-            packet = super.read( packetId, buf, protocolHack );
+            packet = super.read( packetId, buf );
         }
 
         return packet;

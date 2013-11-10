@@ -14,6 +14,7 @@ public class Varint21LengthFieldPrepender extends MessageToByteEncoder<ByteBuf>
     protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception
     {
         int bodyLen = msg.readableBytes();
+        System.out.println( bodyLen );
         int headerLen = varintSize( bodyLen );
         out.ensureWritable( headerLen + bodyLen );
 

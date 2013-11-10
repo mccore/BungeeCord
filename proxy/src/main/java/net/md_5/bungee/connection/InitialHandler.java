@@ -231,8 +231,8 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             return;
         }
 
-        unsafe().sendPacket( PacketConstants.I_AM_BUNGEE );
-        unsafe().sendPacket( PacketConstants.FORGE_MOD_REQUEST );
+        //unsafe().sendPacket( PacketConstants.I_AM_BUNGEE );
+        //unsafe().sendPacket( PacketConstants.FORGE_MOD_REQUEST );
 
         unsafe().sendPacket( request = EncryptionUtil.encryptRequest( this.onlineMode ) );
         thisState = State.ENCRYPT;
@@ -245,7 +245,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
 
         sharedKey = EncryptionUtil.getSecret( encryptResponse, request );
         Cipher decrypt = EncryptionUtil.getCipher( Cipher.DECRYPT_MODE, sharedKey );
-        ch.addBefore( PipelineUtils.PACKET_DECODE_HANDLER, PipelineUtils.DECRYPT_HANDLER, new CipherDecoder( decrypt ) );
+        ch.addBefore( PipelineUtils.DUAL_PROTOCOL_PACKET_DECODER, PipelineUtils.DECRYPT_HANDLER, new CipherDecoder( decrypt ) );
 
         if ( this.onlineMode )
         {

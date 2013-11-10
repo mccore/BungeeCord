@@ -17,7 +17,7 @@ public class PacketMapping {
     /**
      * Re-writers for packets
       */
-    public static PacketRewriter[] rewriters = new PacketRewriter[ 0xFF ];
+    public static PacketRewriter[] rewriters = new PacketRewriter[ 0xFF + 1 ];
 
     static {
         // Client mappings
@@ -139,7 +139,13 @@ public class PacketMapping {
         rewriters[ 0xC8 ] = new StatiticsRewriter();
         rewriters[ 0xC9 ] = new PlayerListItemRewriter();
         rewriters[ 0xCB ] = new TabCompleteRewriter();
+        rewriters[ 0xCC ] = new ClientSettingsRewriter();
         rewriters[ 0xCE ] = new ScoreboardObjectiveRewriter();
         rewriters[ 0xCF ] = new UpdateScoreRewriter();
+        rewriters[ 0xD0 ] = new ShowScoreboardRewriter();
+        rewriters[ 0xD1 ] = new TeamsRewriter();
+        rewriters[ 0xFA ] = new PluginMessageRewriter();
+        rewriters[ 0xFC ] = new EncryptionRequestRewriter();
+        rewriters[ 0xFF ] = new DisconnectRewriter();
     }
 }

@@ -10,12 +10,11 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.BungeeServerInfo;
-import net.md_5.bungee.ServerConnector;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
-import net.md_5.bungee.netty.decoders.InitialPacketDecoder;
+import net.md_5.bungee.netty.decoders.DualProtocolPacketDecoder;
 import net.md_5.bungee.netty.decoders.PacketDecoder;
 import net.md_5.bungee.netty.encoders.DefinedPacketEncoder;
 import net.md_5.bungee.protocol.Vanilla;
@@ -38,17 +37,8 @@ public class PipelineUtils
                 // return;
             }
 
-            BASE.initChannel( ch );
-            ch.pipeline().get( HandlerBoss.class ).setHandler( new InitialHandler( ProxyServer.getInstance(), ch.attr( LISTENER ).get() ) );
-        }
-    };
-    public static final ChannelInitializer<Channel> CLIENT = new ChannelInitializer<Channel>()
-    {
-        @Override
-        protected void initChannel(Channel ch) throws Exception
-        {
             CLIENT_BASE.initChannel( ch );
-            ch.pipeline().get( HandlerBoss.class ).setHandler( new ServerConnector( ProxyServer.getInstance(), ch.attr( USER ).get(), ch.attr( TARGET ).get() ) );
+            ch.pipeline().get( HandlerBoss.class ).setHandler( new InitialHandler( ProxyServer.getInstance(), ch.attr( LISTENER ).get() ) );
         }
     };
     public static final Base BASE = new Base();
@@ -66,7 +56,7 @@ public class PipelineUtils
     public static String VARINT_ENCODE_HANDLER = "varint-encoder";
     public static String TRANSLATOR_DECODE_HANDLER = "translate-decoder";
     public static String TRANSLATOR_ENCODE_HANDLER = "translate-encoder";
-    public static String INITIAL_DECODER_HANDLER = "initial-decoder";
+    public static String DUAL_PROTOCOL_PACKET_DECODER = "dual-protocol-packet-decoder";
 
     public final static class Base extends ChannelInitializer<Channel>
     {
@@ -83,6 +73,7 @@ public class PipelineUtils
             }
 
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
+            //ch.pipeline().addLast( INITIAL_DECODER_HANDLER, new DualProtocolPacketDecoder() );
             ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
             ch.pipeline().addLast( PACKET_ENCODE_HANDLER, packetEncoder );
             ch.pipeline().addLast( BOSS_HANDLER, new HandlerBoss() );
@@ -106,8 +97,10 @@ public class PipelineUtils
             }
 
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
-            ch.pipeline().addLast( INITIAL_DECODER_HANDLER, new InitialPacketDecoder() );
-            ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
+            DualProtocolPacketDecoder dppd = new DualProtocolPacketDecoder( Vanilla.getInstance() );
+            ch.pipeline().addLast( DUAL_PROTOCOL_PACKET_DECODER, dppd );
+            //ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
+            //ch.pipeline().addLast( PACKET_ENCODE_HANDLER, new DualProtocolPacketEncoder( dppd ) );
             ch.pipeline().addLast( PACKET_ENCODE_HANDLER, packetEncoder );
             ch.pipeline().addLast( BOSS_HANDLER, new HandlerBoss() );
         }

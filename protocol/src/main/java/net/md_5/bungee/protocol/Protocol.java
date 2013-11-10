@@ -10,7 +10,7 @@ public interface Protocol
 
     PacketReader getSkipper();
 
-    DefinedPacket read(short packetId, ByteBuf buf, boolean protocolHack);
+    DefinedPacket read(short packetId, ByteBuf buf);
 
     OpCode[][] getOpCodes();
 

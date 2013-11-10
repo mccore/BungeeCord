@@ -15,5 +15,6 @@ public class DefinedPacketEncoder extends MessageToByteEncoder<DefinedPacket>
     {
         out.writeByte( msg.getId() );
         msg.write( out );
+        System.out.println( msg.getId() );
     }
 }

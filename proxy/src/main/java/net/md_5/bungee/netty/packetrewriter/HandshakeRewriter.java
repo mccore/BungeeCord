@@ -12,7 +12,7 @@ public class HandshakeRewriter extends PacketRewriter {
         readVarInt( in ); // Size of the login packet
         readVarInt( in ); // Packet ID to the login packet
         String user = readString( in );
-        out.writeByte( protocolVersion );
+        out.writeByte( 78 );
         Var.writeString( user, out, false );
         Var.writeString(host, out, false);
         out.writeInt( port );

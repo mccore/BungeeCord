@@ -11,9 +11,10 @@ public class EncryptionResponseRewriter extends PacketRewriter {
 
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
-        Var.writeString( "cake", out, true );
-        Var.writeString( "cake", out, true );
-        in.readBytes( in.readableBytes() );
+        String UUID = Var.readString( in, false );
+        String username = Var.readString( in, false );
+        Var.writeString( UUID, out, true );
+        Var.writeString( username, out, true );
         // WOWE, such hack
     }
 }

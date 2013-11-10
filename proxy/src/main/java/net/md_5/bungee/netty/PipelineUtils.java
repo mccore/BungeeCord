@@ -16,7 +16,10 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.netty.decoders.DualProtocolPacketDecoder;
 import net.md_5.bungee.netty.decoders.PacketDecoder;
+import net.md_5.bungee.netty.decoders.PacketTranslatorDecoder;
 import net.md_5.bungee.netty.encoders.DefinedPacketEncoder;
+import net.md_5.bungee.netty.encoders.PacketTranslatorEncoder;
+import net.md_5.bungee.netty.encoders.Varint21LengthFieldPrepender;
 import net.md_5.bungee.protocol.Vanilla;
 
 public class PipelineUtils
@@ -97,10 +100,10 @@ public class PipelineUtils
             }
 
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
-            DualProtocolPacketDecoder dppd = new DualProtocolPacketDecoder( Vanilla.getInstance() );
-            ch.pipeline().addLast( DUAL_PROTOCOL_PACKET_DECODER, dppd );
-            //ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
-            //ch.pipeline().addLast( PACKET_ENCODE_HANDLER, new DualProtocolPacketEncoder( dppd ) );
+            ch.pipeline().addLast( DUAL_PROTOCOL_PACKET_DECODER, new DualProtocolPacketDecoder( Vanilla.getInstance() ) );
+            ch.pipeline().addLast( VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
+            ch.pipeline().addLast( TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( Vanilla.getInstance() ) );
+            ch.pipeline().addLast( TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
             ch.pipeline().addLast( PACKET_ENCODE_HANDLER, packetEncoder );
             ch.pipeline().addLast( BOSS_HANDLER, new HandlerBoss() );
         }

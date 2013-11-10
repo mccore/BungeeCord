@@ -109,6 +109,7 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter
 
             if ( handler != null )
             {
+                cause.printStackTrace();
                 try
                 {
                     handler.exception( cause );

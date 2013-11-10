@@ -6,16 +6,22 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import net.md_5.bungee.netty.PacketMapping;
 import net.md_5.bungee.netty.Var;
+import net.md_5.bungee.netty.packetrewriter.PacketRewriter;
 
 @ChannelHandler.Sharable
 public class PacketTranslatorEncoder extends MessageToByteEncoder<ByteBuf> {
     @Override
-    protected void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
-        System.out.println( "ENCODING" );
-        int packetId = in.readUnsignedShort();
+    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
+        short packetId = msg.readUnsignedByte();
+        System.out.println( "Encoding " + packetId );
+        PacketRewriter rewriter = PacketMapping.rewriters[ packetId ];
         int mappedPacketId = PacketMapping.spm[ packetId ];
-        System.out.println( mappedPacketId );
+        System.out.println( "Mapped to " + mappedPacketId );
         Var.writeVarInt( mappedPacketId, out );
-        out.writeBytes( in.readBytes( in.readableBytes() ) );
+        if ( rewriter == null ) {
+            out.writeBytes( msg.readBytes( msg.readableBytes() ) );
+        } else {
+            rewriter.rewriteServerToClient( msg, out );
+        }
     }
 }

@@ -35,9 +35,9 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = Var.readVarInt( in );
-        short mappedPacketId;
+        System.out.println( "Incoming " + packetId );
         if ( isInitialized ) {
-            mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
+            short mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
             System.out.println( packetId );
             PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
             ByteBuf content = Unpooled.buffer();
@@ -74,7 +74,6 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
                 response.writeBytes( in.readBytes( in.readableBytes() ) );
                 ByteBuf copy = response.copy();
                 out.add( new PacketWrapper( protocol.read( response.readUnsignedByte(), response ), copy ) );
-                System.out.println( "Wooo, encryption response! :D" );
                 isInitialized = true;
             }
         }

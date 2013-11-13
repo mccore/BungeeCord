@@ -1,10 +1,8 @@
 package net.md_5.bungee.netty.packetrewriter;
 
 import io.netty.buffer.ByteBuf;
-import net.md_5.bungee.netty.Var;
 
-public class DisconnectRewriter extends PacketRewriter {
-
+public class ChangeGameStateRewriter extends PacketRewriter {
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
         unsupported( true );
@@ -12,9 +10,9 @@ public class DisconnectRewriter extends PacketRewriter {
 
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
-        String reason = Var.readString( in, false );
-        System.out.println( "DISCONNECT!! " + reason );
-        Var.writeString( "{text:\"" + reason + "\"}", out, true );
+        byte reason = in.readByte();
+        byte gameMode = in.readByte();
+        out.writeByte( reason );
+        out.writeFloat( gameMode );
     }
-
 }

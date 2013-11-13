@@ -19,6 +19,8 @@ public class PacketMapping {
       */
     public static PacketRewriter[] rewriters = new PacketRewriter[ 0xFF + 1 ];
 
+    public static boolean[] blacklisted = new boolean[ 0xFF + 1 ];
+
     static {
         // Client mappings
         cpm[ 0x00 ] = 0x00;
@@ -50,7 +52,7 @@ public class PacketMapping {
 
         spm[ 0x00 ] = 0x00;
         spm[ 0x01 ] = 0x01;
-        spm[ 0x02 ] = 0x02;
+        spm[ 0x03 ] = 0x02;
         spm[ 0x04 ] = 0x03;
         spm[ 0x05 ] = 0x04;
         spm[ 0x06 ] = 0x05;
@@ -115,6 +117,9 @@ public class PacketMapping {
         spm[ 0xFC ] = 0x02;
         spm[ 0xFD ] = 0x01;
         spm[ 0xFF ] = 0x40;
+
+        blacklisted[ 0xC8 ] = true;
+        blacklisted[ 0xCB ] = true;
 
         /*spm[ 0x00 ] = 0x00;
         spm[ 0x01 ] = 0x01;
@@ -187,12 +192,16 @@ public class PacketMapping {
         rewriters[ 0x02 ] = new HandshakeRewriter();
         rewriters[ 0x03 ] = new ChatMessageRewriter();
         rewriters[ 0x09 ] = new RespawnRewriter();
+        rewriters[ 0x10 ] = new HeldItemChangeRewriter();
         rewriters[ 0x0B ] = new EntityChangeRewriter();
+        rewriters[ 0x0D ] = new PositionAndLookRewriter();
         rewriters[ 0x14 ] = new SpawnPlayerRewriter();
         rewriters[ 0x17 ] = new EntityChangeRewriter();
-        rewriters[ 0x18 ] = new EntityChangeRewriter();
+        rewriters[ 0x18 ] = new SpawnMobRewriter();
         rewriters[ 0x19 ] = new SpawnPaintingRewriter();
         rewriters[ 0x1A ] = new EntityChangeRewriter();
+        rewriters[ 0x28 ] = new EntityMetadataRewriter();
+        rewriters[ 0x2C ] = new EntityPropertiesRewriter();
 
         // TODO 0x2C
 
@@ -202,10 +211,10 @@ public class PacketMapping {
         rewriters[ 0x3E ] = new SoundEffectRewriter();
         rewriters[ 0x3F ] = new ParticleRewriter();
         rewriters[ 0x64 ] = new WindowOpenRewriter();
+        rewriters[ 0x46 ] = new ChangeGameStateRewriter();
         rewriters[ 0x47 ] = new EntityChangeRewriter();
         rewriters[ 0x82 ] = new UpdateSignRewriter();
         rewriters[ 0x83 ] = new EntityChangeRewriter(); // Not really entity change, but first value is int
-        rewriters[ 0xC8 ] = new StatiticsRewriter();
         rewriters[ 0xC9 ] = new PlayerListItemRewriter();
         rewriters[ 0xCB ] = new TabCompleteRewriter();
         rewriters[ 0xCC ] = new ClientSettingsRewriter();

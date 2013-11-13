@@ -62,7 +62,13 @@ public class UpstreamBridge extends PacketHandler
         EntityMap.rewrite( packet.buf, con.getClientEntityId(), con.getServerEntityId() );
         if ( con.getServer() != null )
         {
-            con.getServer().getCh().write( packet );
+            int index = packet.buf.readerIndex();
+            int packetId = packet.buf.readUnsignedByte();
+            packet.buf.readerIndex( index );
+            //System.out.println( "Upstream " + packetId );
+            if ( packetId != 11 ) {
+                con.getServer().getCh().write( packet );
+            }
         }
     }
 

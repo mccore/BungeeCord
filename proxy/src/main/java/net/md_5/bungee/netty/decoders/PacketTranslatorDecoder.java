@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
+import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.netty.PacketMapping;
 import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.netty.Var;
@@ -35,21 +36,25 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = Var.readVarInt( in );
-        System.out.println( "Incoming " + packetId );
+        //System.out.println( "Incoming " + packetId );
         if ( isInitialized ) {
             short mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
-            System.out.println( packetId );
-            PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
-            ByteBuf content = Unpooled.buffer();
-            content.writeByte( mappedPacketId );
-            if ( rewriter == null ) {
-                content.writeBytes( in.readBytes( in.readableBytes() ) );
+            if ( !PacketMapping.blacklisted[ mappedPacketId ] ) {  // Black list some packets D:
+                //System.out.println( packetId );
+                PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
+                ByteBuf content = Unpooled.buffer();
+                content.writeByte( mappedPacketId );
+                if ( rewriter == null ) {
+                    content.writeBytes( in.readBytes( in.readableBytes() ) );
+                } else {
+                    rewriter.rewriteClientToServer( in, content );
+                }
+                ByteBuf copy = content.copy();
+                PacketWrapper packet = new PacketWrapper( protocol.read( content.readUnsignedByte(), content ), copy );
+                out.add( packet );
             } else {
-                rewriter.rewriteClientToServer( in, content );
+                //throw new CancelSendSignal();
             }
-            ByteBuf copy = content.copy();
-            PacketWrapper packet = new PacketWrapper( protocol.read( mappedPacketId, content ), copy );
-            out.add( packet );
         } else {
             if ( packetId == 0x00 ) {
                 if ( address == null ) {

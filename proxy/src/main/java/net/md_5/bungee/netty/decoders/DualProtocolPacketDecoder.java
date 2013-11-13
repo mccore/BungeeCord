@@ -41,53 +41,30 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception
     {
+        int  startIndex = in.readerIndex();
         // While we have enough data
-        while ( true )
+        while ( !isInitialized || !ver17 )
         {
             // Store our start index
-            System.out.println( "DECODING" );
-            int  startIndex = in.readerIndex();
+            //System.out.println( "DECODING" );
+            startIndex = in.readerIndex();
             short packetId = in.readUnsignedByte();
             if ( ver17 || ( !isInitialized && packetId != 0x02 && packetId != 0xFE ) ) {
                 if ( !isInitialized ) {
                     ver17 = true;
                     isInitialized = true;
+                    ctx.pipeline().addBefore( PipelineUtils.PACKET_ENCODE_HANDLER, PipelineUtils.TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( protocol ) );
+                    ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_DECODE_HANDLER, PipelineUtils.TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
+                    ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_ENCODE_HANDLER, PipelineUtils.VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
                     System.out.println( ctx.pipeline().names() );
                 }
-                in.readerIndex(startIndex);
-                final byte[] buf = new byte[ 3 ];
-                for ( int i = 0; i < buf.length; i++ )
-                {
-                    if ( !in.isReadable() )
-                    {
-                        in.resetReaderIndex();
-                        return;
-                    }
-
-                    buf[i] = in.readByte();
-                    if ( buf[i] >= 0 )
-                    {
-                        int length = DefinedPacket.readVarInt( Unpooled.wrappedBuffer(buf) );
-
-                        if ( in.readableBytes() < length )
-                        {
-                            in.resetReaderIndex();
-                            return;
-                        } else
-                        {
-                            out.add( in.readBytes( length ) );
-                            return;
-                        }
-                    }
-                }
-                throw new UnsupportedOperationException( "Not implemented yet." );
             } else {
                 if ( !isInitialized ) {
                     isInitialized = true;
                     ctx.pipeline().flush();
-                    ctx.pipeline().remove( PipelineUtils.TRANSLATOR_DECODE_HANDLER );
-                    ctx.pipeline().remove( PipelineUtils.TRANSLATOR_ENCODE_HANDLER );
-                    ctx.pipeline().remove( PipelineUtils.VARINT_ENCODE_HANDLER );
+                    // ctx.pipeline().remove( PipelineUtils.TRANSLATOR_DECODE_HANDLER );
+                    // ctx.pipeline().remove( PipelineUtils.TRANSLATOR_ENCODE_HANDLER );
+                    // ctx.pipeline().remove( PipelineUtils.VARINT_ENCODE_HANDLER );
                     System.out.println( ctx.pipeline().names() );
                 }
                 //  Run packet through framer
@@ -101,6 +78,35 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                 // Store our decoded message
                 out.add(new PacketWrapper(packet, buf));
             }
+        }
+        if ( ver17 ) {
+            in.readerIndex( startIndex );
+            final byte[] buf = new byte[ 3 ];
+            for ( int i = 0; i < buf.length; i++ )
+            {
+                if ( !in.isReadable() )
+                {
+                    in.resetReaderIndex();
+                    return;
+                }
+
+                buf[i] = in.readByte();
+                if ( buf[i] >= 0 )
+                {
+                    int length = DefinedPacket.readVarInt( Unpooled.wrappedBuffer(buf) );
+
+                    if ( in.readableBytes() < length )
+                    {
+                        in.resetReaderIndex();
+                        return;
+                    } else
+                    {
+                        out.add( in.readBytes( length ) );
+                        return;
+                    }
+                }
+            }
+            throw new UnsupportedOperationException( "Not implemented yet." );
         }
     }
 }

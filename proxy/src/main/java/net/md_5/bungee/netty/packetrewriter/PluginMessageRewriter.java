@@ -3,13 +3,23 @@ package net.md_5.bungee.netty.packetrewriter;
 import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.netty.Var;
 
+import java.nio.charset.Charset;
+
 public class PluginMessageRewriter extends PacketRewriter {
 
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
         String channel = Var.readString( in, true );
+        short length = in.readShort();
+        byte[] content = new byte[ length ];
+        in.readBytes(content);
+
+        System.out.println( channel );
+        System.out.println( new String( content, Charset.forName( "UTF-8" ) ) );
+
         Var.writeString( channel, out, false );
-        out.writeBytes( in.readBytes( in.readableBytes() ) );
+        out.writeShort( length );
+        out.writeBytes( content );
     }
 
     @Override

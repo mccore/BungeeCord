@@ -323,8 +323,10 @@ public class InitialHandler extends PacketHandler implements PendingConnection
                                 Cipher encrypt = EncryptionUtil.getCipher( Cipher.ENCRYPT_MODE, sharedKey );
                                 ch.addBefore( PipelineUtils.DECRYPT_HANDLER, PipelineUtils.ENCRYPT_HANDLER, new CipherEncoder( encrypt ) );
                                 System.out.println( ch.getHandle().pipeline().names() );
+                                // Not too sure how the netty pipeline works.
                                 if ( ch.getHandle().pipeline().names().contains( PipelineUtils.TRANSLATOR_ENCODE_HANDLER ) ) {
                                     unsafe().sendPacket( new PacketLoginSuccess( getName() ) );
+                                    try{handle( new PacketCDClientStatus( (byte)0 ) );}catch(Exception e){}
                                 }
                             } catch ( GeneralSecurityException ex )
                             {

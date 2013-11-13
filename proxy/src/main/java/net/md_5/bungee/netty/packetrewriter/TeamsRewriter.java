@@ -13,7 +13,6 @@ public class TeamsRewriter extends PacketRewriter {
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
         String teamName = Var.readString( in, false );
-
         Var.writeString( teamName, out, true );
 
         byte mode = in.readByte();
@@ -21,12 +20,16 @@ public class TeamsRewriter extends PacketRewriter {
             String displayName = Var.readString( in, false );
             String teamPrefix = Var.readString( in, false );
             String teamSuffix = Var.readString( in, false );
-            byte friendlyFire = in.readByte();
+            boolean friendlyFire = in.readBoolean();
+
+            System.out.println( "Disp name: " + displayName );
+            System.out.println( "prefix: " + teamPrefix );
+            System.out.println( "suffix: " + teamSuffix );
 
             Var.writeString( displayName, out, true );
             Var.writeString( teamPrefix, out, true );
             Var.writeString( teamSuffix, out, true );
-            out.writeByte( friendlyFire );
+            out.writeBoolean( friendlyFire );
         }
 
         if ( mode == 0 || mode == 3 || mode == 4 ) {
@@ -35,6 +38,7 @@ public class TeamsRewriter extends PacketRewriter {
             for ( int i = 0; i < length; i++ ) {
                 String user = Var.readString( in, false );
                 Var.writeString( user, out, true );
+                System.out.println( "user: " + user );
             }
         }
     }

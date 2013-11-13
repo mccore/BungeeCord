@@ -37,7 +37,6 @@ public class PacketDecoder extends ReplayingDecoder<Void>
             // Store our start index
             int  startIndex = in.readerIndex();
             short packetId = in.readUnsignedByte();
-            System.out.println( "WOWE, i got such a " + packetId );
             //  Run packet through framer
             DefinedPacket packet = protocol.read( packetId, in );
             // If we got this far, it means we have formed a packet, so lets grab the end index

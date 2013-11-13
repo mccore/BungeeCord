@@ -79,6 +79,15 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter
                 }
                 if ( sendPacket )
                 {
+                    if ( false && !ctx.pipeline().names().contains( PipelineUtils.DECRYPT_HANDLER ) ) {
+                        if ( packet.packet != null ) {
+                            System.out.println( "Sending defined packet with ID " + packet.packet.getId() );
+                        } else {
+                            int index = packet.buf.readerIndex();
+                            System.out.println( "Sending packet with ID " + packet.buf.readUnsignedByte() );
+                            packet.buf.readerIndex( index );
+                        }
+                    }
                     handler.handle( packet );
                 }
             } finally
@@ -109,7 +118,6 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter
 
             if ( handler != null )
             {
-                cause.printStackTrace();
                 try
                 {
                     handler.exception( cause );

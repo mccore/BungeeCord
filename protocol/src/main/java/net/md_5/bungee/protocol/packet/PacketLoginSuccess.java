@@ -2,10 +2,13 @@ package net.md_5.bungee.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.UUID;
+
 public class PacketLoginSuccess extends DefinedPacket {
     String name;
     public PacketLoginSuccess(String name) {
         super( 0xFC );
+        this.name = name;
     }
 
     @Override
@@ -15,7 +18,7 @@ public class PacketLoginSuccess extends DefinedPacket {
 
     @Override
     public void write(ByteBuf buf) {
-        writeString( "cake", buf );
+        writeString( UUID.randomUUID().toString(), buf );
         writeString( name, buf );
     }
 
@@ -31,11 +34,11 @@ public class PacketLoginSuccess extends DefinedPacket {
 
     @Override
     public int hashCode() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     @Override
     public String toString() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return "UUID:" + "cake" + ", NAME:" + name;
     }
 }

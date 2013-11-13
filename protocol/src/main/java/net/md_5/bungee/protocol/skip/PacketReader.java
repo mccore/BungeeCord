@@ -67,7 +67,11 @@ public class PacketReader
         {
             for ( Instruction instruction : packetDef )
             {
-                instruction.read( in );
+                try {
+                    instruction.read( in );
+                } catch ( Exception e ) {
+                    System.out.println( "Failed to skip packet " + packetId );
+                }
             }
         }
     }

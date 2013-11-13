@@ -20,7 +20,6 @@ public class CipherEncoder extends MessageToByteEncoder<ByteBuf>
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception
     {
-        System.out.println( "U R ENCOED" );
         cipher.cipher( in, out );
     }
 }

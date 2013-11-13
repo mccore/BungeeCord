@@ -15,6 +15,5 @@ public class EncryptionResponseRewriter extends PacketRewriter {
         String username = Var.readString( in, false );
         Var.writeString( UUID, out, true );
         Var.writeString( username, out, true );
-        // WOWE, such hack
     }
 }

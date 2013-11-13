@@ -13,6 +13,7 @@ public class ChatMessageRewriter extends PacketRewriter {
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
         String message = Var.readString( in, false );
+        System.out.println( message );
         Var.writeString( message, out, true );
     }
 }

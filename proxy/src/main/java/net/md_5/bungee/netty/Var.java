@@ -104,4 +104,33 @@ public class Var {
         }
     }
 
+    public static void rewriteEntityMetadata(ByteBuf in, ByteBuf out) {
+        while ( true ) {
+            int item = in.readUnsignedByte();
+            out.writeByte( item );
+            if ( item == 0x7F ) {
+                break;
+            }
+            int type = item >> 5;
+            if ( type == 0 ) out.writeByte( in.readByte() );
+            else if ( type == 1 ) out.writeShort( in.readShort() );
+            else if ( type == 2 ) out.writeInt( in.readInt() );
+            else if ( type == 3 ) out.writeFloat( in.readFloat() );
+            else if ( type == 4 ) Var.writeString( Var.readString( in, false ), out, true );
+            else if ( type == 5 ) {
+                short itemType = in.readShort();
+                if ( itemType >= 0 ) {
+                    out.writeBytes( in.readBytes( 3 ) );
+                    short bytes = in.readShort();
+                    out.writeShort( bytes );
+                    out.writeBytes( in.readBytes( bytes ) );
+                }
+            } else if ( type == 6 ) {
+                out.writeInt( in.readInt() );
+                out.writeInt( in.readInt() );
+                out.writeInt( in.readInt() );
+            }
+        }
+    }
+
 }

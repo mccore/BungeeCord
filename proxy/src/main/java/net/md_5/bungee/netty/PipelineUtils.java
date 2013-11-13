@@ -46,7 +46,7 @@ public class PipelineUtils
     };
     public static final Base BASE = new Base();
     public static final Client CLIENT_BASE = new Client();
-    private static final DefinedPacketEncoder packetEncoder = new DefinedPacketEncoder();
+    private static final DefinedPacketEncoder packetEncoder = new DefinedPacketEncoder( false );
     public static String TIMEOUT_HANDLER = "timeout";
     public static String PACKET_DECODE_HANDLER = "packet-decoder";
     public static String PACKET_ENCODE_HANDLER = "packet-encoder";
@@ -78,7 +78,7 @@ public class PipelineUtils
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
             //ch.pipeline().addLast( INITIAL_DECODER_HANDLER, new DualProtocolPacketDecoder() );
             ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
-            ch.pipeline().addLast( PACKET_ENCODE_HANDLER, packetEncoder );
+            ch.pipeline().addLast( PACKET_ENCODE_HANDLER, new DefinedPacketEncoder( true ) );
             ch.pipeline().addLast( BOSS_HANDLER, new HandlerBoss() );
         }
     };
@@ -101,9 +101,9 @@ public class PipelineUtils
 
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
             ch.pipeline().addLast( DUAL_PROTOCOL_PACKET_DECODER, new DualProtocolPacketDecoder( Vanilla.getInstance() ) );
-            ch.pipeline().addLast( VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
-            ch.pipeline().addLast( TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( Vanilla.getInstance() ) );
-            ch.pipeline().addLast( TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
+            // ch.pipeline().addLast( VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
+            // ch.pipeline().addLast( TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( Vanilla.getInstance() ) );
+            // ch.pipeline().addLast( TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
             ch.pipeline().addLast( PACKET_ENCODE_HANDLER, packetEncoder );
             ch.pipeline().addLast( BOSS_HANDLER, new HandlerBoss() );
         }

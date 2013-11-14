@@ -5,13 +5,12 @@ import io.netty.buffer.ByteBuf;
 public class HeldItemChangeRewriter extends PacketRewriter {
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
-        byte slot = in.readByte();
-        out.writeShort( slot );
+        out.writeBytes( in.readBytes( in.readableBytes() ) );
     }
 
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
-        byte slot = (byte) in.readShort();
+        byte slot = (byte)in.readShort();
         out.writeByte( slot );
     }
 }

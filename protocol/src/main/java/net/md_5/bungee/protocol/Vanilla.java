@@ -30,6 +30,8 @@ import net.md_5.bungee.protocol.skip.PacketReader;
 public class Vanilla implements Protocol
 {
 
+    public static int lastPacket = 0;
+
     public static final byte PROTOCOL_VERSION = 78;
     public static final String GAME_VERSION = "1.6.4";
     @Getter
@@ -78,8 +80,9 @@ public class Vanilla implements Protocol
         DefinedPacket packet = read( packetId, buf, this );
         if ( buf.readerIndex() == start )
         {
-            throw new BadPacketException( "Unknown packet id " + packetId );
+            throw new BadPacketException( "Unknown packet id " + packetId + " last successful " + lastPacket );
         }
+        lastPacket = packetId;
         return packet;
     }
 

@@ -119,6 +119,7 @@ public class Var {
             else if ( type == 4 ) Var.writeString( Var.readString( in, false ), out, true );
             else if ( type == 5 ) {
                 short itemType = in.readShort();
+                out.writeShort( itemType );
                 if ( itemType >= 0 ) {
                     out.writeBytes( in.readBytes( 3 ) );
                     short bytes = in.readShort();

@@ -191,6 +191,7 @@ public class PacketMapping {
         rewriters[ 0x01 ] = new JoinGameRewriter();
         rewriters[ 0x02 ] = new HandshakeRewriter();
         rewriters[ 0x03 ] = new ChatMessageRewriter();
+        rewriters[ 0x07 ] = new EntityInteractRewriter();
         rewriters[ 0x09 ] = new RespawnRewriter();
         rewriters[ 0x10 ] = new HeldItemChangeRewriter();
         rewriters[ 0x0B ] = new EntityChangeRewriter();

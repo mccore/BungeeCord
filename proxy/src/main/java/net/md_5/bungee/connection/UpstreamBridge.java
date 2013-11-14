@@ -66,7 +66,7 @@ public class UpstreamBridge extends PacketHandler
             int packetId = packet.buf.readUnsignedByte();
             packet.buf.readerIndex( index );
             //System.out.println( "Upstream " + packetId );
-            if ( packetId != 11 ) {
+            if ( false && packetId != 11 ) {
                 con.getServer().getCh().write( packet );
             }
         }

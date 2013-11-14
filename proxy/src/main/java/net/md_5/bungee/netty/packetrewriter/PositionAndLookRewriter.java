@@ -12,7 +12,6 @@ public class PositionAndLookRewriter extends PacketRewriter {
         float yaw = in.readFloat();
         float pitch = in.readFloat();
         boolean onGround = in.readBoolean();
-        System.out.println( "x=" + x + ",y=" + y + ",z=" + z );
         out.writeDouble( x );
         out.writeDouble( y );
         out.writeDouble( stance );
@@ -25,8 +24,8 @@ public class PositionAndLookRewriter extends PacketRewriter {
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
         double x = in.readDouble();
-        in.readDouble(); // Ignore stance.
         double y = in.readDouble();
+        in.readDouble(); // Ignore stance.
         double z = in.readDouble();
         out.writeDouble( x );
         out.writeDouble( y );

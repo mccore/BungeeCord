@@ -124,7 +124,9 @@ public class Var {
                     out.writeBytes( in.readBytes( 3 ) );
                     short bytes = in.readShort();
                     out.writeShort( bytes );
-                    out.writeBytes( in.readBytes( bytes ) );
+                    if ( bytes >= 0 ) {
+                        out.writeBytes( in.readBytes( bytes ) );
+                    }
                 }
             } else if ( type == 6 ) {
                 out.writeInt( in.readInt() );

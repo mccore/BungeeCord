@@ -70,6 +70,7 @@ public class PacketReader
                 try {
                     instruction.read( in );
                 } catch ( Exception e ) {
+                    e.printStackTrace();
                     System.out.println( "Failed to skip packet " + packetId );
                 }
             }

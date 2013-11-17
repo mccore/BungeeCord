@@ -7,16 +7,7 @@ public class BlockChangeRewriter extends PacketRewriter {
 
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
-        int x = in.readInt();
-        short y = in.readUnsignedByte();
-        int z = in.readInt();
-        int blockType = Var.readVarInt( in );
-        short blockData = in.readUnsignedByte();
-        out.writeInt( x );
-        out.writeByte( y );
-        out.writeInt( z );
-        out.writeShort( blockType );
-        out.writeByte( blockData );
+        unsupported( true );
     }
 
     @Override

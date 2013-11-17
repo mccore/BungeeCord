@@ -14,9 +14,6 @@ public class PluginMessageRewriter extends PacketRewriter {
         byte[] content = new byte[ length ];
         in.readBytes(content);
 
-        System.out.println( channel );
-        System.out.println( new String( content, Charset.forName( "UTF-8" ) ) );
-
         Var.writeString( channel, out, false );
         out.writeShort( length );
         out.writeBytes( content );

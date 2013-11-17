@@ -8,7 +8,6 @@ public class ClientSettingsRewriter extends PacketRewriter {
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
         String locale = Var.readString( in, true );
-        System.out.println( locale );
         byte viewDistance = in.readByte();
         byte chatFlags = in.readByte();
         in.readBoolean();

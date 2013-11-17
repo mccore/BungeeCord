@@ -165,6 +165,7 @@ public class PacketMapping {
         rewriters[ 0x09 ] = new RespawnRewriter();
         rewriters[ 0x0D ] = new PositionAndLookRewriter();
         rewriters[ 0x10 ] = new HeldItemChangeRewriter();
+        rewriters[ 0x11 ] = new UseBedRewriter();
         rewriters[ 0x12 ] = new AnimationRewriter();
         rewriters[ 0x14 ] = new SpawnPlayerRewriter();
         rewriters[ 0x17 ] = new EntityChangeRewriter();

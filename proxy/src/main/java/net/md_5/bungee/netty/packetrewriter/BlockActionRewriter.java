@@ -17,13 +17,13 @@ public class BlockActionRewriter extends PacketRewriter {
         int z = in.readInt();
         byte b1 = in.readByte();
         byte b2 = in.readByte();
-        int blockType = Var.readVarInt( in );
+        int blockType = in.readShort();
         out.writeInt( x );
         out.writeShort( y );
         out.writeInt( z );
         out.writeByte( b1 );
         out.writeByte( b2 );
-        out.writeShort( blockType );
+        Var.writeVarInt( blockType, out );
     }
 
 }

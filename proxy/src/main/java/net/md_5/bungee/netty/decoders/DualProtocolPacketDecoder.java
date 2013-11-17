@@ -46,7 +46,6 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
         while ( !isInitialized || !ver17 )
         {
             // Store our start index
-            //System.out.println( "DECODING" );
             startIndex = in.readerIndex();
             short packetId = in.readUnsignedByte();
             if ( ver17 || ( !isInitialized && packetId != 0x02 && packetId != 0xFE ) ) {
@@ -56,16 +55,11 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                     ctx.pipeline().addBefore( PipelineUtils.PACKET_ENCODE_HANDLER, PipelineUtils.TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( protocol ) );
                     ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_DECODE_HANDLER, PipelineUtils.TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
                     ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_ENCODE_HANDLER, PipelineUtils.VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
-                    System.out.println( ctx.pipeline().names() );
                 }
             } else {
                 if ( !isInitialized ) {
                     isInitialized = true;
                     ctx.pipeline().flush();
-                    // ctx.pipeline().remove( PipelineUtils.TRANSLATOR_DECODE_HANDLER );
-                    // ctx.pipeline().remove( PipelineUtils.TRANSLATOR_ENCODE_HANDLER );
-                    // ctx.pipeline().remove( PipelineUtils.VARINT_ENCODE_HANDLER );
-                    System.out.println( ctx.pipeline().names() );
                 }
                 //  Run packet through framer
                 DefinedPacket packet = protocol.read( packetId, in );

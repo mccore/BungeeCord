@@ -1,6 +1,7 @@
 package net.md_5.bungee.netty.packetrewriter;
 
 import io.netty.buffer.ByteBuf;
+import net.md_5.bungee.netty.PacketMapping;
 import net.md_5.bungee.netty.Var;
 
 public class AnimationRewriter extends PacketRewriter {
@@ -14,6 +15,6 @@ public class AnimationRewriter extends PacketRewriter {
         int entityId = in.readInt();
         byte animation = in.readByte();
         Var.writeVarInt( entityId, out );
-        out.writeByte( animation );
+        out.writeByte( PacketMapping.animations[ animation ] );
     }
 }

@@ -23,9 +23,9 @@ public class SpawnPlayerRewriter extends PacketRewriter {
         byte pitch = in.readByte();
         short currentItem = in.readShort();
 
+        Var.writeVarInt( entityId, out );
         Var.writeString( "wowe_such_packet", out, true );
         Var.writeString( name, out, true );
-        Var.writeVarInt( entityId, out );
         out.writeInt( x );
         out.writeInt( y );
         out.writeInt( z );

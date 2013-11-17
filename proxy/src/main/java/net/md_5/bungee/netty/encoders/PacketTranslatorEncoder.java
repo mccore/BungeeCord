@@ -14,19 +14,13 @@ public class PacketTranslatorEncoder extends MessageToByteEncoder<ByteBuf> {
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
         short packetId = msg.readUnsignedByte();
-            if ( !PacketMapping.blacklisted[ packetId ] ) {
-                //System.out.println( "Encoding " + packetId );
-                PacketRewriter rewriter = PacketMapping.rewriters[ packetId ];
-                int mappedPacketId = PacketMapping.spm[ packetId ];
-                //System.out.println( "Mapped to " + mappedPacketId );
-                Var.writeVarInt( mappedPacketId, out );
-                if ( rewriter == null ) {
-                    out.writeBytes( msg.readBytes( msg.readableBytes() ) );
-                } else {
-                    rewriter.rewriteServerToClient( msg, out );
-                }
-            } else {
-                //throw new CancelSendSignal();
-            }
+        PacketRewriter rewriter = PacketMapping.rewriters[ packetId ];
+        int mappedPacketId = PacketMapping.spm[ packetId ];
+        Var.writeVarInt( mappedPacketId, out );
+        if ( rewriter == null ) {
+            out.writeBytes( msg.readBytes( msg.readableBytes() ) );
+        } else {
+            rewriter.rewriteServerToClient( msg, out );
+        }
     }
 }

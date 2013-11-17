@@ -1,8 +1,6 @@
 package net.md_5.bungee.netty;
 
-import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.netty.packetrewriter.*;
-import net.md_5.bungee.protocol.packet.DefinedPacket;
 
 public class PacketMapping {
     /**
@@ -19,7 +17,15 @@ public class PacketMapping {
       */
     public static PacketRewriter[] rewriters = new PacketRewriter[ 0xFF + 1 ];
 
-    public static boolean[] blacklisted = new boolean[ 0xFF + 1 ];
+    /**
+     * Animation mappings, 1.6.4->1.7.2
+     */
+    public static byte[] animations = new byte[ 106 ];
+
+    /**
+     * Statistics mapping, 1.6.4->1.7.2
+     */
+    public static String[] statistics = new String[ 2029 ];
 
     static {
         // Client mappings
@@ -108,7 +114,7 @@ public class PacketMapping {
         spm[ 0xC9 ] = 0x38;
         spm[ 0xCA ] = 0x39;
         spm[ 0xCB ] = 0x3A;
-        spm[ 0xCB ] = 0x3B;
+        spm[ 0xCE ] = 0x3B;
         spm[ 0xCF ] = 0x3C;
         spm[ 0xD0 ] = 0x3D;
         spm[ 0xD1 ] = 0x3E;
@@ -117,7 +123,39 @@ public class PacketMapping {
         spm[ 0xFD ] = 0x01;
         spm[ 0xFF ] = 0x40;
 
-        blacklisted[ 0xCB ] = true;
+        animations[ 1 ] = 0;
+        animations[ 2 ] = 1;
+        animations[ 3 ] = 2;
+        animations[ 5 ] = 3;
+        animations[ 6 ] = 4;
+        animations[ 7 ] = 5;
+        animations[ 102 ] = 102;
+        animations[ 104 ] = 104;
+        animations[ 105 ] = 105;
+
+        statistics[ 1004 ] = "stat.leaveGame";
+        statistics[ 1100 ] = "stat.playOneMinute";
+        statistics[ 2000 ] = "stat.walkOneCm";
+        statistics[ 2001 ] = "stat.swimOneCm";
+        statistics[ 2002 ] = "stat.fallOneCm";
+        statistics[ 2003 ] = "stat.climbOneCm";
+        statistics[ 2004 ] = "stat.flyOneCm";
+        statistics[ 2005 ] = "stat.diveOneCm";
+        statistics[ 2006 ] = "stat.minecartOneCm";
+        statistics[ 2007 ] = "stat.boatOneCm";
+        statistics[ 2008 ] = "stat.pigOneCm"; // Not on minecraftwiki
+        statistics[ 2009 ] = "stat.horseOneCm"; // Same with this one
+        statistics[ 2010 ] = "stat.jump";
+        statistics[ 2011 ] = "stat.drop";
+        statistics[ 2020 ] = "stat.damageDealt";
+        statistics[ 2021 ] = "stat.damageTaken";
+        statistics[ 2022 ] = "stat.deaths";
+        statistics[ 2023 ] = "stat.mobKills";
+        statistics[ 2024 ] = "stat.playerKills";
+        statistics[ 2025 ] = "stat.fishCaught";
+        statistics[ 2026 ] = "stat.junkFished";
+        statistics[ 2027 ] = "stat.treasureFished";
+        statistics[ 2028 ] = "stat.animalsBred"; // Not on wiki, and no really fitting ids
 
         // Re-writers
         rewriters[ 0x01 ] = new JoinGameRewriter();
@@ -149,6 +187,7 @@ public class PacketMapping {
         rewriters[ 0xC9 ] = new PlayerListItemRewriter();
         rewriters[ 0xCB ] = new TabCompleteRewriter();
         rewriters[ 0xCC ] = new ClientSettingsRewriter();
+        rewriters[ 0xCD ] = new ClientStatusRewriter();
         rewriters[ 0xCE ] = new ScoreboardObjectiveRewriter();
         rewriters[ 0xCF ] = new UpdateScoreRewriter();
         rewriters[ 0xD0 ] = new ShowScoreboardRewriter();

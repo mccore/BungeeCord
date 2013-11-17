@@ -39,22 +39,18 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
         //System.out.println( "Incoming " + packetId );
         if ( isInitialized ) {
             short mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
-            if ( !PacketMapping.blacklisted[ mappedPacketId ] ) {  // Black list some packets D:
-                //System.out.println( packetId );
-                PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
-                ByteBuf content = Unpooled.buffer();
-                content.writeByte( mappedPacketId );
-                if ( rewriter == null ) {
-                    content.writeBytes( in.readBytes( in.readableBytes() ) );
-                } else {
-                    rewriter.rewriteClientToServer( in, content );
-                }
-                ByteBuf copy = content.copy();
-                PacketWrapper packet = new PacketWrapper( protocol.read( content.readUnsignedByte(), content ), copy );
-                out.add( packet );
+            //System.out.println( packetId );
+            PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
+            ByteBuf content = Unpooled.buffer();
+            content.writeByte( mappedPacketId );
+            if ( rewriter == null ) {
+                content.writeBytes( in.readBytes( in.readableBytes() ) );
             } else {
-                //throw new CancelSendSignal();
+                rewriter.rewriteClientToServer( in, content );
             }
+            ByteBuf copy = content.copy();
+            PacketWrapper packet = new PacketWrapper( protocol.read( content.readUnsignedByte(), content ), copy );
+            out.add( packet );
         } else {
             if ( packetId == 0x00 ) {
                 if ( address == null ) {

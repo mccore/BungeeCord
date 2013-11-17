@@ -176,6 +176,7 @@ public class PacketMapping {
         rewriters[ 0x35 ] = new BlockChangeRewriter();
         rewriters[ 0x36 ] = new BlockActionRewriter();
         rewriters[ 0x37 ] = new EntityChangeRewriter();
+        rewriters[ 0x3C ] = new ExplotionRewriter();
         rewriters[ 0x3E ] = new SoundEffectRewriter();
         rewriters[ 0x3F ] = new ParticleRewriter();
         rewriters[ 0x64 ] = new WindowOpenRewriter();

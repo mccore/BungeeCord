@@ -40,6 +40,8 @@ public class BungeeServerInfo implements ServerInfo
     @Getter
     private final String motd;
     @Getter
+    private final String multilineMotd;
+    @Getter
     private final boolean restricted;
     @Getter
     private final Queue<DefinedPacket> packetQueue = new LinkedList<>();

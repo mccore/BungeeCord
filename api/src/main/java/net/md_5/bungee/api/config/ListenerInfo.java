@@ -22,6 +22,10 @@ public class ListenerInfo
      */
     private final String motd;
     /**
+     * Displayed 1.7.2 motd
+     */
+    private final String multilineMotd;
+    /**
      * Max amount of slots displayed on the ping page.
      */
     private final int maxPlayers;

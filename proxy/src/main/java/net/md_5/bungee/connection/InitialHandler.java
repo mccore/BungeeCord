@@ -187,7 +187,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         players.add( "sample", new JsonArray() ); // empty array
         result.add( "version", version );
         result.add( "players", players );
-        result.add( "description", new JsonPrimitive( listener.getMotd().replaceAll( "\\\\n", "\n" ) ) );
+        result.add( "description", new JsonPrimitive( listener.getMultilineMotd().replaceAll( "\\\\n", "\n" ) ) );
         String favicon = bungee.getFavicon();
         if ( favicon != null ) {
             result.add( "favicon", new JsonPrimitive( favicon ) );

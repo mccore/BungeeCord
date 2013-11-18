@@ -171,9 +171,10 @@ public class YamlConfig implements ConfigurationAdapter
             String name = entry.getKey();
             String addr = get( "address", "localhost:25565", val );
             String motd = ChatColor.translateAlternateColorCodes( '&', get( "motd", "&1Just another BungeeCord - Forced Host", val ) );
+            String multilineMotd = ChatColor.translateAlternateColorCodes( '&', get( "multilinemotd", "&1Just another BungeeCord - Forced Host", val ) );
             boolean restricted = get( "restricted", false, val );
             InetSocketAddress address = Util.getAddr( addr );
-            ServerInfo info = ProxyServer.getInstance().constructServerInfo( name, address, motd, restricted );
+            ServerInfo info = ProxyServer.getInstance().constructServerInfo( name, address, motd, multilineMotd, restricted );
             ret.put( name, info );
         }
 
@@ -197,6 +198,9 @@ public class YamlConfig implements ConfigurationAdapter
         {
             String motd = get( "motd", "&1Another Bungee server", val );
             motd = ChatColor.translateAlternateColorCodes( '&', motd );
+            String multilineMotd = get( "multilinemotd", "&1Another Bungee server", val );
+            multilineMotd = ChatColor.translateAlternateColorCodes( '&', multilineMotd );
+
 
             int maxPlayers = get( "max_players", 1, val );
             String defaultServer = get( "default_server", "lobby", val );
@@ -218,7 +222,7 @@ public class YamlConfig implements ConfigurationAdapter
             boolean query = get( "query_enabled", false, val );
             int queryPort = get( "query_port", 25577, val );
 
-            ListenerInfo info = new ListenerInfo( address, motd, maxPlayers, tabListSize, defaultServer, fallbackServer, forceDefault, forced, value.clazz, setLocalAddress, pingPassthrough, queryPort, query );
+            ListenerInfo info = new ListenerInfo( address, motd, multilineMotd, maxPlayers, tabListSize, defaultServer, fallbackServer, forceDefault, forced, value.clazz, setLocalAddress, pingPassthrough, queryPort, query );
             ret.add( info );
         }
 

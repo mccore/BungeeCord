@@ -44,6 +44,11 @@ public interface ServerInfo
     String getMotd();
 
     /**
+     * Returns the multiline motd which should be used when this server is a forced host
+     */
+    String getMultilineMotd();
+
+    /**
      * Whether the player can access this server. It will only return false when
      * the player has no permission and this server is restricted.
      *

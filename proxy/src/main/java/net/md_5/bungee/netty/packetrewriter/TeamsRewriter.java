@@ -16,15 +16,12 @@ public class TeamsRewriter extends PacketRewriter {
         Var.writeString( teamName, out, true );
 
         byte mode = in.readByte();
+        out.writeByte( mode );
         if ( mode == 0 || mode == 2 ) {
             String displayName = Var.readString( in, false );
             String teamPrefix = Var.readString( in, false );
             String teamSuffix = Var.readString( in, false );
             boolean friendlyFire = in.readBoolean();
-
-            System.out.println( "Disp name: " + displayName );
-            System.out.println( "prefix: " + teamPrefix );
-            System.out.println( "suffix: " + teamSuffix );
 
             Var.writeString( displayName, out, true );
             Var.writeString( teamPrefix, out, true );
@@ -38,7 +35,6 @@ public class TeamsRewriter extends PacketRewriter {
             for ( int i = 0; i < length; i++ ) {
                 String user = Var.readString( in, false );
                 Var.writeString( user, out, true );
-                System.out.println( "user: " + user );
             }
         }
     }

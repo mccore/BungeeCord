@@ -13,7 +13,6 @@ public class DisconnectRewriter extends PacketRewriter {
     @Override
     public void rewriteServerToClient(ByteBuf in, ByteBuf out) {
         String reason = Var.readString( in, false );
-        System.out.println( "DISCONNECT!! " + reason );
         Var.writeString( "{text:\"" + reason + "\"}", out, true );
     }
 

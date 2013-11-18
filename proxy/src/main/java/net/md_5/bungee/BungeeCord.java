@@ -519,4 +519,9 @@ public class BungeeCord extends ProxyServer
     {
         return config.getDisabledCommands();
     }
+
+    @Override
+    public String getFavicon() {
+        return config.getFavicon();
+    }
 }

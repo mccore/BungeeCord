@@ -5,6 +5,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.netty.PacketMapping;
 import net.md_5.bungee.netty.PacketWrapper;
@@ -12,6 +14,7 @@ import net.md_5.bungee.netty.Var;
 import net.md_5.bungee.netty.packetrewriter.PacketRewriter;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
+import net.md_5.bungee.protocol.packet.protocolhack.PacketHandshake;
 
 import java.util.List;
 
@@ -21,12 +24,13 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
     String user;
     String address;
     int serverPort;
-    int nextState;
+    @Setter
+    @Getter
+    int nextState = 0;
 
-
-    boolean isInitialized = false;
-    final static int STATUS = 1;
-    final static int LOGIN = 2;
+    public final static int STATUS = 1;
+    public final static int LOGIN = 2;
+    public final static int INGAME = 3;
 
     Protocol protocol;
     public PacketTranslatorDecoder(Protocol protocol) {
@@ -36,10 +40,9 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = Var.readVarInt( in );
-        //System.out.println( "Incoming " + packetId );
-        if ( isInitialized ) {
+        //if ( nextState == STATUS || nextState == LOGIN ) {
+        if ( nextState == INGAME ) {
             short mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
-            //System.out.println( packetId );
             PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
             ByteBuf content = Unpooled.buffer();
             content.writeByte( mappedPacketId );
@@ -52,31 +55,15 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
             PacketWrapper packet = new PacketWrapper( protocol.read( content.readUnsignedByte(), content ), copy );
             out.add( packet );
         } else {
-            if ( packetId == 0x00 ) {
-                if ( address == null ) {
-                    Var.readVarInt( in ); // Ignore protocol version, cause we are pro like that.
-                    address = Var.readString( in, true );
-                    serverPort = in.readUnsignedShort();
-                    nextState = Var.readVarInt( in );
-                } else if ( nextState == LOGIN ) {
-                    user = Var.readString( in, true );
-                    ByteBuf handshake = Unpooled.buffer();
-                    handshake.writeByte( 0x02 );
-                    handshake.writeByte( 78 );
-                    Var.writeString( user, handshake, false );
-                    Var.writeString( address, handshake, false );
-                    handshake.writeInt( serverPort );
-                    ByteBuf copy = handshake.copy();
-                    out.add( new PacketWrapper( protocol.read( handshake.readUnsignedByte(), handshake ), copy ) );
+            ByteBuf copy = in.copy();
+            DefinedPacket packet = PacketMapping.readInitialPacket( packetId, nextState, in );
+            if ( packet instanceof PacketHandshake ) {
+                int state = ((PacketHandshake) packet).getState();
+                if ( state == STATUS || state == LOGIN ) {
+                    nextState = state;
                 }
-            } else if ( packetId == 0x01 ) {
-                ByteBuf response = Unpooled.buffer();
-                response.writeByte( 0xFC );
-                response.writeBytes( in.readBytes( in.readableBytes() ) );
-                ByteBuf copy = response.copy();
-                out.add( new PacketWrapper( protocol.read( response.readUnsignedByte(), response ), copy ) );
-                isInitialized = true;
             }
+            out.add( new PacketWrapper( packet, copy ) );
         }
     }
 }

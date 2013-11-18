@@ -1,5 +1,7 @@
 package net.md_5.bungee.protocol.packet;
 
+import net.md_5.bungee.protocol.packet.protocolhack.*;
+
 public abstract class AbstractPacketHandler
 {
 
@@ -76,6 +78,26 @@ public abstract class AbstractPacketHandler
     }
 
     public void handle(PacketCBTabComplete tabComplete) throws Exception
+    {
+    }
+
+    public void handle(PacketPing ping) throws Exception
+    {
+    }
+
+    public void handle(PacketPingRequest pingRequest) throws Exception
+    {
+    }
+
+    public void handle(PacketLoginStart loginStart) throws Exception
+    {
+    }
+
+    public void handle(PacketEncryptionResponse encryptionResponse) throws Exception
+    {
+    }
+
+    public void handle(PacketHandshake handshake) throws Exception
     {
     }
 }

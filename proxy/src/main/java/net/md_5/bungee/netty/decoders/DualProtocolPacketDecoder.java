@@ -13,6 +13,7 @@ import net.md_5.bungee.netty.Var;
 import net.md_5.bungee.netty.encoders.PacketTranslatorEncoder;
 import net.md_5.bungee.netty.encoders.Varint21LengthFieldPrepender;
 import net.md_5.bungee.protocol.Protocol;
+import net.md_5.bungee.protocol.Vanilla;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.skip.PacketReader;
 
@@ -52,8 +53,9 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                 if ( !isInitialized ) {
                     ver17 = true;
                     isInitialized = true;
-                    ctx.pipeline().addBefore( PipelineUtils.PACKET_ENCODE_HANDLER, PipelineUtils.TRANSLATOR_DECODE_HANDLER, new PacketTranslatorDecoder( protocol ) );
-                    ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_DECODE_HANDLER, PipelineUtils.TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder() );
+                    PacketTranslatorDecoder trDecoder = new PacketTranslatorDecoder( protocol );
+                    ctx.pipeline().addBefore( PipelineUtils.PACKET_ENCODE_HANDLER, PipelineUtils.TRANSLATOR_DECODE_HANDLER, trDecoder );
+                    ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_DECODE_HANDLER, PipelineUtils.TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder( trDecoder ) );
                     ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_ENCODE_HANDLER, PipelineUtils.VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
                 }
             } else {
@@ -87,7 +89,7 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                 buf[i] = in.readByte();
                 if ( buf[i] >= 0 )
                 {
-                    int length = DefinedPacket.readVarInt( Unpooled.wrappedBuffer(buf) );
+                    int length = Var.readVarInt( Unpooled.wrappedBuffer(buf) );
 
                     if ( in.readableBytes() < length )
                     {

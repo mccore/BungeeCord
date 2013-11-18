@@ -247,4 +247,10 @@ public abstract class ProxyServer
      * @return the set of disabled commands
      */
     public abstract Collection<String> getDisabledCommands();
+
+    /**
+     * Gets the favicon to the bungee server
+     * @return the base64 encoded string
+     */
+    public abstract String getFavicon();
 }

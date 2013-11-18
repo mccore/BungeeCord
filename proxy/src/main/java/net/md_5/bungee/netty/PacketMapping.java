@@ -1,6 +1,12 @@
 package net.md_5.bungee.netty;
 
+import io.netty.buffer.ByteBuf;
 import net.md_5.bungee.netty.packetrewriter.*;
+import net.md_5.bungee.protocol.packet.DefinedPacket;
+import net.md_5.bungee.protocol.packet.protocolhack.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PacketMapping {
     /**
@@ -26,6 +32,9 @@ public class PacketMapping {
      * Statistics mapping, 1.6.4->1.7.2
      */
     public static String[] statistics = new String[ 2029 ];
+
+    public static int supportedStart = 1;
+    public static int supportedEnd = 4;
 
     static {
         // Client mappings
@@ -199,5 +208,32 @@ public class PacketMapping {
         rewriters[ 0xFC ] = new EncryptionResponseRewriter();
         rewriters[ 0xFD ] = new EncryptionRequestRewriter();
         rewriters[ 0xFF ] = new DisconnectRewriter();
+    }
+
+    public static DefinedPacket readInitialPacket(int packetId, int state, ByteBuf buf) {
+        DefinedPacket packet;
+        if ( state == 0 ) {
+            packet = new PacketHandshake();
+        } else if ( state == 1 ) {
+            if ( packetId == 0x00 ) {
+                packet = new PacketPingRequest();
+            } else if ( packetId == 0x01 ) {
+                packet = new PacketPing();
+            } else {
+                return null;
+            }
+        } else if ( state == 2 ) {
+            if ( packetId == 0x00 ) {
+                packet = new PacketLoginStart();
+            } else if ( packetId == 0x01 ) {
+                packet = new PacketEncryptionResponse();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+        packet.read( buf );
+        return packet;
     }
 }

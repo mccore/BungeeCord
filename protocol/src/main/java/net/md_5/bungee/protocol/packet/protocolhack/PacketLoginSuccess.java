@@ -1,13 +1,15 @@
-package net.md_5.bungee.protocol.packet;
+package net.md_5.bungee.protocol.packet.protocolhack;
 
 import io.netty.buffer.ByteBuf;
+import net.md_5.bungee.protocol.packet.AbstractPacketHandler;
+import net.md_5.bungee.protocol.packet.DefinedPacket;
 
 import java.util.UUID;
 
-public class PacketLoginSuccess extends DefinedPacket {
+public class PacketLoginSuccess extends Defined172Packet {
     String name;
     public PacketLoginSuccess(String name) {
-        super( 0xFC );
+        super( 0x02 );
         this.name = name;
     }
 
@@ -18,8 +20,8 @@ public class PacketLoginSuccess extends DefinedPacket {
 
     @Override
     public void write(ByteBuf buf) {
-        writeString( UUID.randomUUID().toString(), buf );
-        writeString( name, buf );
+        writeString( UUID.randomUUID().toString(), buf, true );
+        writeString( name, buf, true );
     }
 
     @Override

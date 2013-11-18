@@ -1,10 +1,7 @@
 package net.md_5.bungee.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
@@ -21,6 +18,14 @@ public class Packet2Handshake extends DefinedPacket
     private Packet2Handshake()
     {
         super( 0x02 );
+    }
+
+    public Packet2Handshake(byte protocolVersion, String username, String host, int port) {
+        this();
+        this.protocolVersion = protocolVersion;
+        this.username = username;
+        this.host = host;
+        this.port = port;
     }
 
     @Override

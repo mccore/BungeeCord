@@ -102,7 +102,6 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                     }
                 }
             }
-            throw new UnsupportedOperationException( "Not implemented yet." );
         }
     }
 }

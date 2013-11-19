@@ -72,6 +72,7 @@ public class PacketReader
                 } catch ( Exception e ) {
                     e.printStackTrace();
                     System.out.println( "Failed to skip packet " + packetId );
+                    throw e;
                 }
             }
         }

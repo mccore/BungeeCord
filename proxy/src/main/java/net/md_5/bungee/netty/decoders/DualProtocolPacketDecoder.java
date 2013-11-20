@@ -57,11 +57,11 @@ public class DualProtocolPacketDecoder extends ReplayingDecoder<Void>
                     ctx.pipeline().addBefore( PipelineUtils.PACKET_ENCODE_HANDLER, PipelineUtils.TRANSLATOR_DECODE_HANDLER, trDecoder );
                     ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_DECODE_HANDLER, PipelineUtils.TRANSLATOR_ENCODE_HANDLER, new PacketTranslatorEncoder( trDecoder ) );
                     ctx.pipeline().addBefore( PipelineUtils.TRANSLATOR_ENCODE_HANDLER, PipelineUtils.VARINT_ENCODE_HANDLER, new Varint21LengthFieldPrepender() );
+                    ctx.pipeline().flush();
                 }
             } else {
                 if ( !isInitialized ) {
                     isInitialized = true;
-                    ctx.pipeline().flush();
                 }
                 //  Run packet through framer
                 DefinedPacket packet = protocol.read( packetId, in );

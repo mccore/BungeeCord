@@ -17,9 +17,6 @@ public class DefinedPacketEncoder extends MessageToByteEncoder<DefinedPacket>
     @Override
     protected void encode(ChannelHandlerContext ctx, DefinedPacket msg, ByteBuf out) throws Exception
     {
-        if ( debugOutput ) {
-            //System.out.println( "Sending an " + msg.getId() + " to the server" );
-        }
         out.writeByte( msg.getId() );
         msg.write( out );
     }

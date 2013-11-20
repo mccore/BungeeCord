@@ -12,6 +12,7 @@ import net.md_5.bungee.netty.PacketMapping;
 import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.netty.Var;
 import net.md_5.bungee.netty.packetrewriter.PacketRewriter;
+import net.md_5.bungee.protocol.BadPacketException;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.protocolhack.PacketHandshake;
@@ -20,10 +21,6 @@ import java.util.List;
 
 public class PacketTranslatorDecoder extends ByteToMessageDecoder {
 
-    // For the hack
-    String user;
-    String address;
-    int serverPort;
     @Setter
     @Getter
     int nextState = 0;
@@ -40,7 +37,6 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = Var.readVarInt( in );
-        //if ( nextState == STATUS || nextState == LOGIN ) {
         if ( nextState == INGAME ) {
             short mappedPacketId = PacketMapping.cpm[ packetId ]; // Convert to 1.6.4 packet id
             PacketRewriter rewriter = PacketMapping.rewriters[ mappedPacketId ];
@@ -52,8 +48,13 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
                 rewriter.rewriteClientToServer( in, content );
             }
             ByteBuf copy = content.copy();
-            PacketWrapper packet = new PacketWrapper( protocol.read( content.readUnsignedByte(), content ), copy );
-            out.add( packet );
+            DefinedPacket packet = protocol.read( content.readUnsignedByte(), content );
+            if ( in.readableBytes() != 0 )
+            {
+                throw new BadPacketException( "Did not read all bytes from packet " + packet.getClass() + " " + packetId + " Protocol " + protocol );
+            }
+            out.add( new PacketWrapper( packet, copy ) );
+            content.release();
         } else {
             ByteBuf copy = in.copy();
             DefinedPacket packet = PacketMapping.readInitialPacket( packetId, nextState, in );
@@ -62,6 +63,10 @@ public class PacketTranslatorDecoder extends ByteToMessageDecoder {
                 if ( state == STATUS || state == LOGIN ) {
                     nextState = state;
                 }
+            }
+            if ( in.readableBytes() != 0 )
+            {
+                throw new BadPacketException( "Did not read all bytes from packet " + packet.getClass() + " " + packetId + " Protocol " + protocol );
             }
             out.add( new PacketWrapper( packet, copy ) );
         }

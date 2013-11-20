@@ -76,7 +76,9 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     private ScheduledFuture<?> pingFuture;
     private InetSocketAddress vHost;
     private byte version = -1;
-    private PacketHandshake ver17handshake;
+    private PacketLoginStart loginstart;
+
+    PacketHandshake ver17handshake;
 
     private enum State
     {
@@ -193,13 +195,16 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             result.add( "favicon", new JsonPrimitive( favicon ) );
         }
         unsafe().sendPacket( new PacketPingResponse( result.toString() ) );
+        BungeeCord.getInstance().getConnectionThrottle().unthrottle( getAddress().getAddress() );
     }
 
     @Override
     public void handle(PacketPing ping)
     {
         unsafe().sendPacket( ping );
-        ch.close();
+        if ( !ch.isClosed() ) {
+            ch.close();
+        }
     }
 
     @Override
@@ -221,8 +226,8 @@ public class InitialHandler extends PacketHandler implements PendingConnection
 
     @Override
     public void handle(PacketLoginStart loginStart) {
-        handshake = new Packet2Handshake( (byte) 78, loginStart.getUser(), ver17handshake.getServerAddress(),
-                ver17handshake.getServerPort() );
+        loginstart = loginStart;
+        handshake = new Packet2Handshake( (byte)78, loginstart.getUser(), ver17handshake.getServerAddress(), ver17handshake.getServerPort() );
 
         bungee.getPluginManager().callEvent( new PlayerHandshakeEvent( InitialHandler.this, handshake ) );
 
@@ -234,7 +239,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             disconnect( bungee.getTranslation( "outdated_client" ) );
         }
 
-        if ( handshake.getUsername().length() > 16 )
+        if ( loginStart.getUser().length() > 16 )
         {
             disconnect( "Cannot have username longer than 16 characters" );
             return;

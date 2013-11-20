@@ -12,7 +12,7 @@ public class ClientStatusRewriter extends PacketRewriter {
     @Override
     public void rewriteClientToServer(ByteBuf in, ByteBuf out) {
         byte status = in.readByte();
-        out.writeByte( statuses[ status] );
+        out.writeByte( statuses[ status ] );
     }
 
     @Override

@@ -397,9 +397,6 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             };
 
             HttpClient.get( authURL, ch.getHandle().eventLoop(), handler );
-        } else
-        {
-            // Send login success
         }
     }
 
@@ -500,7 +497,9 @@ public class InitialHandler extends PacketHandler implements PendingConnection
                                     unsafe.sendPacket( new PacketLoginSuccess( getName() ) );
                                     try {
                                         handle( new PacketCDClientStatus( (byte)0 ) );
-                                    } catch (Exception e) {
+                                    } catch ( CancelSendSignal e ) {
+
+                                    } catch ( Exception e ) {
                                         e.printStackTrace();
                                     }
                                 }

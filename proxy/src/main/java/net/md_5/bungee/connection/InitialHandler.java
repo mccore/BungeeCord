@@ -40,6 +40,7 @@ import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PacketHandler;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.netty.decoders.CipherDecoder;
+import net.md_5.bungee.netty.decoders.DualProtocolPacketDecoder;
 import net.md_5.bungee.netty.decoders.PacketDecoder;
 import net.md_5.bungee.netty.encoders.CipherEncoder;
 import net.md_5.bungee.protocol.Forge;
@@ -255,7 +256,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         Preconditions.checkState( forgeLogin == null, "Already received FORGE LOGIN" );
         forgeLogin = login;
 
-        ch.getHandle().pipeline().get( PacketDecoder.class ).setProtocol( Forge.getInstance() );
+        ch.getHandle().pipeline().get( DualProtocolPacketDecoder.class ).setProtocol( Forge.getInstance() );
     }
 
     @Override
@@ -345,7 +346,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         unsafe().sendPacket( PacketConstants.I_AM_BUNGEE );
         unsafe().sendPacket( PacketConstants.FORGE_MOD_REQUEST );
 
-        unsafe().sendPacket( request164 = EncryptionUtil.encryptRequest164(this.onlineMode) );
+        unsafe().sendPacket( request164 = EncryptionUtil.encryptRequest164( this.onlineMode ) );
         thisState = State.ENCRYPT;
     }
 
@@ -486,8 +487,6 @@ public class InitialHandler extends PacketHandler implements PendingConnection
                         {
                             if ( !ver17 ) {
                                 unsafe().sendPacket( new PacketFCEncryptionResponse( new byte[ 0 ], new byte[ 0 ] ) );
-                            }
-                            if ( !ch.getHandle().pipeline().names().contains( PipelineUtils.TRANSLATOR_ENCODE_HANDLER ) ) {
                             }
                             try
                             {

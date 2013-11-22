@@ -96,7 +96,7 @@ public class NewServerPing
 
                 JsonObject jsonPlayerSample = new JsonObject();
                 jsonPlayerSample.add( "name", new JsonPrimitive( playerInfo.getName() ) );
-                jsonPlayerSample.add( "id", new JsonPrimitive( "aaaa" ) ); //In the future the real uuid can be put here.
+                jsonPlayerSample.add( "id", new JsonPrimitive( playerInfo.getId() ) );
                 jsonPlayerInfo.add(jsonPlayerSample);
 
             }

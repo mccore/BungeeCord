@@ -1,6 +1,5 @@
 package net.md_5.bungee.api;
 
-import java.util.List;
 import lombok.Data;
 
 /**
